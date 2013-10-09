@@ -12,7 +12,7 @@ import dbconf
 reload(sys) 
 sys.setdefaultencoding('utf8')
 
-logging.basicConfig(filename='future.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
+logging.basicConfig(filename='future_shfe.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
  
 query1 = "insert into data_trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 query2 = "insert into data_buy(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
