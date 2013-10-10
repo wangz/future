@@ -12,7 +12,7 @@ if len(sys.argv)==4:
         url_date1 = sys.argv[2]
         url_date2 = sys.argv[3]
 else:
-    print "need 3 args ,now is %s, which to execute(shfe,dce,cffex or czce) ,time from, and time end ,example:shfe 20120912 20120915" % (len(sys.argv)-1)
+    print "need 3 args ,now is %s, which to execute(shfe,dce,cffex or czce) ,time from, and time end ,example:shfe 20120912 20120915;0912 and 0915 will be included" % (len(sys.argv)-1)
     exit(1)
 
 if where == 'shfe':	

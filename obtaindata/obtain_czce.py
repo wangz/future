@@ -38,25 +38,25 @@ logging.info("处理日期 url_date: %s",url_date)
 '''obtain futures data'''
 url_one = "http://www.czce.com.cn/portal/exchange/%s/datatradeholding/%s.htm" % (url_date[0:4],url_date)
 
-# try:
-#     f = None
-#     f = urllib2.urlopen(url_one)
-#     rawdata = f.read()
-# except Exception,e:
-#     logging.error("下载此页信息失败！URL：%s" % url_one)
-#     logging.error(e)
-#     exit(1)
-# finally:
-#     if f!=None:
-#         f.close()
+try:
+    f = None
+    f = urllib2.urlopen(url_one)
+    rawdata = f.read()
+except Exception,e:
+    logging.error("下载此页信息失败！URL：%s" % url_one)
+    logging.error(e)
+    exit(1)
+finally:
+    if f!=None:
+        f.close()
 
 # f2=open('data_czce_20130711.htm','w')
 # f2.write(rawdata)
 # f2.close()
 
-f3= open('data_czce_20130711.htm','r')
-rawdata = f3.read()
-f3.close()
+# f3= open('data_czce_20130711.htm','r')
+# rawdata = f3.read()
+# f3.close()
 
 ishasdata = False
 logging.info("处理URL为：%s" % url_one)

@@ -1,2 +1,10 @@
-字段:
-日期 来源 合约号 公司 类型 金额
+
+
+getall :
+
+
+
+crontab example:
+59 8 * * * python /home/wz/autosignin/moofeel.py>>/home/wz/autosignin/log.out
+* */2 * * * /usr/sbin/ntpdate us.pool.ntp.org&
+
