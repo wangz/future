@@ -8,3 +8,14 @@ crontab example:
 59 8 * * * python /home/wz/autosignin/moofeel.py>>/home/wz/autosignin/log.out
 * */2 * * * /usr/sbin/ntpdate us.pool.ntp.org&
 
+etc/my.cfg   add :
+[client]
+default-character-set = utf8
+[mysqld]
+default-character-set = utf8
+
+
+delete:
+delete from data_buy; delete from data_selling ;delete from data_trading;
+
+delete from data_buy where origin='' and pub_date=''; delete from data_selling ;delete from data_trading;
