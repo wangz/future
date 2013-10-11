@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #encoding=utf-8
 # pip install BeautifulSoup MySQL-python   for old data 
+#yum install MySQL-python
 import sys,re,urllib2,urllib,cookielib,chardet,time
 from BeautifulSoup import BeautifulSoup,Comment
 from datetime import * 
@@ -12,7 +13,7 @@ import dbconf
 reload(sys) 
 sys.setdefaultencoding('utf8')
 
-logging.basicConfig(filename='future_shfe_all.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
+logging.basicConfig(filename='future_shfe.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
  
 query1 = "insert into data_trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 query2 = "insert into data_buy(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
@@ -25,10 +26,9 @@ if len(sys.argv)>1:
     if sys.argv[1]!=None:
         url_date = sys.argv[1]
 else:
-    logging.info('未输入日期')
-    exit(1)
-    # now = date.today()
-    # url_date = now.strftime('%Y%m%d')
+    logging.info('未输入日期,use today')
+    now = date.today()
+    url_date = now.strftime('%Y%m%d')
 logging.info("处理日期 url_date: %s",url_date)
 '''obtain futures data'''
 url_one = "http://www.shfe.com.cn/dailydata/kx/pm%s.html" % url_date
@@ -40,7 +40,7 @@ try:
 except Exception,e:
     logging.error("下载此页信息失败！URL：%s" % url_one)
     logging.error(e)
-    exit(1)
+    sys.exit(1)
 finally:
     if f!=None:
         f.close()
@@ -55,7 +55,7 @@ f2.close()
 
 # replace <!- -> wrong comments
 pattern = re.compile('<\!\-.*\->')
-print pattern.findall(rawdata)
+# print pattern.findall(rawdata)
 rawdata = pattern.sub('',rawdata)
 
 ishasdata = False
@@ -81,7 +81,7 @@ for m in soup.findAll('table'):
     table_c+=1
 logging.info( "find table count = %s" % table_c)
 
-if table_c > 3:
+if table_c > 5:
     ishasdata = True
     logging.info("obtain data success,start process")
 else:
@@ -98,9 +98,23 @@ if ishasdata:
             if index == 0:#first td,if is 交易品种 then get it ;else processing
                 value = mtd.string
                 if value == None:
-                    value = mtd.find('div').string.strip()
+                    value = mtd.find('div') #for 2007
+                    if value != None:
+                        value = value.string
+                        if value != None:#for 2012 has div but none
+                            value = value.strip()
+                        else:
+                            for mmtd in m.findAll('td'):
+                                if mmtd.get('id') == 'jypz':
+                                    value = mmtd.string.strip()
+                    else:
+                        for mmtd in m.findAll('td'):#for 2012
+                            if mmtd.get('id') == 'jypz':
+                                value = mmtd.string.strip()
                 else:
                     value = value.strip()
+                if value == None:
+                    continue
                 if value.find('交易品种')!=-1 or value.find('合约代码')!=-1:
                     if value.find(':')!=-1:
                         hydm = value.split(':')[1] 
@@ -156,6 +170,7 @@ if ishasdata:
                             except Exception,e:
                                 logging.error(" MySQL server exception!!!")
                                 logging.error(e)
+                                sys.exit(1)
                             finally:
                                 if cursor!= None:
                                     cursor.close()

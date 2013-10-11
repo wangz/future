@@ -29,6 +29,8 @@ d1 = datetime.date(int(url_date1[0:4]),int(url_date1[4:6]),int(url_date1[6:8]))
 while(d1 <= datetime.date(int(url_date2[0:4]),int(url_date2[4:6]),int(url_date2[6:8]))):
     print d1.strftime('%Y%m%d')
     result = os.system(locate % d1.strftime('%Y%m%d') )
-    print result
+    print "result: %s" % result
+    if result!=0:
+        break
     d1 = d1 + datetime.timedelta(1)
 
