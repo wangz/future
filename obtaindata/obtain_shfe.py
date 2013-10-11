@@ -19,6 +19,9 @@ query1 = "insert into data_trading(origin,contract,company,value_type,real_value
 query2 = "insert into data_buy(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 query3 = "insert into data_selling(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 
+
+
+
 # url_date = "20040713"
 url_date = "20091012"
 
@@ -32,6 +35,7 @@ else:
 logging.info("处理日期 url_date: %s",url_date)
 '''obtain futures data'''
 url_one = "http://www.shfe.com.cn/dailydata/kx/pm%s.html" % url_date
+
 
 try:
     f = None
@@ -53,8 +57,40 @@ f2.close()
 # rawdata = f3.read()
 # f3.close()
 
+#delete already get data
+conn = None
+cursor = None
+try:
+    conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
+    cursor = conn.cursor()
+    delete_sql = "delete from data_buy where origin='%s' and pub_date=%s;\
+    delete from data_selling where origin='%s' and pub_date=%s;\
+    delete from data_trading where origin='%s' and pub_date=%s;" 
+
+    check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
+    
+    cursor.execute(check_sql % ('上期',url_date))
+     
+    logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
+
+    cursor.execute(delete_sql % ('上期',url_date,'上期',url_date,'上期',url_date))
+    logging.info(delete_sql %  ('上期',url_date,'上期',url_date,'上期',url_date))
+except Exception,e:
+    logging.error(" MySQL server exception!!!")
+    logging.error(e)
+    sys.exit(1)
+finally:
+    if cursor!= None:
+        cursor.close()
+    if conn!= None:
+        conn.commit()
+        conn.close()
+
+
+
 # replace <!- -> wrong comments
-pattern = re.compile('<\!\-.*\->')
+# pattern = re.compile('<\!\-.*\->')
+pattern = re.compile('<\!\-[\s\S]*\->')
 # print pattern.findall(rawdata)
 rawdata = pattern.sub('',rawdata)
 

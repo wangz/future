@@ -24,7 +24,9 @@ def getcontract(trade_date = None,variety = None):
 
     posturl = "http://www.dce.com.cn/PublicWeb/MainServlet"  
     data = {'action':'Pu00021_contract', 'Pu00021_Input.trade_date':trade_date,'Pu00021_Input.content':'0','Pu00021_Input.content':'1', 'Pu00021_Input.content':['0','1','2'], 'Pu00021_Input.variety':variety,'Pu00021_Input.trade_type':'0'}  
+    
     rawdata = post(posturl, data)
+
     rawdata = unicode(rawdata,encoding='gbk').encode('utf-8')
     # print rawdata 
     soup = BeautifulSoup(rawdata)
@@ -53,10 +55,45 @@ def main():
         url_date = now.strftime('%Y%m%d')
     logging.info("处理日期 url_date: %s",url_date)
 
+    #delete already get data
+    conn = None
+    cursor = None
+    try:
+        conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
+        cursor = conn.cursor()
+        delete_sql = "delete from data_buy where origin='%s' and pub_date=%s;\
+        delete from data_selling where origin='%s' and pub_date=%s;\
+        delete from data_trading where origin='%s' and pub_date=%s;" 
+
+        check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
+        
+        cursor.execute(check_sql % ('大连',url_date))
+        print 
+        logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
+
+        cursor.execute(delete_sql % ('大连',url_date,'大连',url_date,'大连',url_date))
+        logging.info(delete_sql %  ('大连',url_date,'大连',url_date,'大连',url_date))
+    except Exception,e:
+        logging.error(" MySQL server exception!!!")
+        logging.error(e)
+        sys.exit(1)
+    finally:
+        if cursor!= None:
+            cursor.close()
+        if conn!= None:
+            conn.commit()
+            conn.close()
+
     varietys = ['a','b','c','j','jm','l','m','p','v','y','s']
     for v in varietys:
         print v
-        contracts = getcontract(variety=v,trade_date=url_date)
+        try:
+            contracts = getcontract(variety=v,trade_date=url_date)
+        except Exception,e:
+            logging.error(" get page data failed!!!")
+            logging.error(e)
+            sys.exit(1)
+
         print contracts
         if len(contracts)>0:
             posturl = "http://www.dce.com.cn/PublicWeb/MainServlet"
@@ -101,6 +138,7 @@ def main():
                             except Exception,e:
                                 logging.error(" MySQL server exception!!!")
                                 logging.error(e)
+                                sys.exit(1)
                             finally:
                                 if cursor!= None:
                                     cursor.close()

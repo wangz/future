@@ -66,6 +66,35 @@ finally:
 # rawdata = f3.read()
 # f3.close()
 
+#delete already get data
+conn = None
+cursor = None
+try:
+    conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
+    cursor = conn.cursor()
+    delete_sql = "delete from data_buy where origin='%s' and pub_date=%s;\
+    delete from data_selling where origin='%s' and pub_date=%s;\
+    delete from data_trading where origin='%s' and pub_date=%s;" 
+
+    check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
+    
+    cursor.execute(check_sql % ('中金',url_date))
+    print 
+    logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
+
+    cursor.execute(delete_sql % ('中金',url_date,'中金',url_date,'中金',url_date))
+    logging.info(delete_sql %  ('中金',url_date,'中金',url_date,'中金',url_date))
+except Exception,e:
+    logging.error(" MySQL server exception!!!")
+    logging.error(e)
+    sys.exit(1)
+finally:
+    if cursor!= None:
+        cursor.close()
+    if conn!= None:
+        conn.commit()
+        conn.close()
+
 ishasdata = False
 logging.info("处理URL为：%s" % url_one)
 
@@ -125,6 +154,7 @@ for index,e in enumerate(dom.getElementsByTagName("data")):
     except Exception,e:
         logging.error(" MySQL server exception!!!")
         logging.error(e)
+        sys.exit(1)
     finally:
         if cursor!= None:
             cursor.close()
