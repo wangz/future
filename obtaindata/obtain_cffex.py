@@ -49,7 +49,7 @@ try:
 
     if f.geturl().find('error_404') > 0 :
         logging.error("此日期无信息！URL：%s" % url_date)
-        exit(1)
+        exit(0)
 except Exception,e:
     logging.error("下载此页信息失败！URL：%s" % url_one)
     logging.error(e)

@@ -42,9 +42,14 @@ try:
     f = urllib2.urlopen(url_one)
     rawdata = f.read()
 except Exception,e:
-    logging.error("下载此页信息失败！URL：%s" % url_one)
-    logging.error(e)
-    sys.exit(1)
+    
+    if isinstance(e,urllib2.HTTPError):
+        logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url_one))
+        sys.exit(0)
+    else:
+        logging.error("下载此页信息失败！URL：%s" % url_one)
+        logging.error(e)
+        sys.exit(1)
 finally:
     if f!=None:
         f.close()
