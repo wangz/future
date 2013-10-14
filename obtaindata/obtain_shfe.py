@@ -54,9 +54,9 @@ finally:
     if f!=None:
         f.close()
 
-f2=open('data_old.htm','w')
-f2.write(rawdata)
-f2.close()
+# f2=open('data_old.htm','w')
+# f2.write(rawdata)
+# f2.close()
 
 # f3= open('data_old.htm','r')
 # rawdata = f3.read()
@@ -92,11 +92,18 @@ finally:
         conn.close()
 
 
-
+# cankan:https://gist.github.com/dndn/859717
 # replace <!- -> wrong comments
 # pattern = re.compile('<\!\-.*\->')
-pattern = re.compile('<\!\-[\s\S]*\->')
+pattern = re.compile('<\!\-[^>]*\->')   #re_comment=re.compile('<!--[^>]*-->')#HTML注释
+# pattern = re.compile('<\!\-[\s\S]*\->') 
+print "<! -> count:",len(pattern.findall(rawdata))
 # print pattern.findall(rawdata)
+
+# f2=open('patern.log','w')
+# f2.write(''.join(pattern.findall(rawdata)))
+# f2.close()
+
 rawdata = pattern.sub('',rawdata)
 
 ishasdata = False
