@@ -36,16 +36,22 @@ else:
     url_date = now.strftime('%Y%m%d')
 logging.info("处理日期 url_date: %s",url_date)
 '''obtain futures data'''
-url_one = "http://www.czce.com.cn/portal/exchange/%s/datatradeholding/%s.htm" % (url_date[0:4],url_date)
-
+if url_date>"20100824":
+    url_one = "http://www.czce.com.cn/portal/exchange/%s/datatradeholding/%s.htm" % (url_date[0:4],url_date)
+else:
+    url_one = "http://www.czce.com.cn/portal/exchange/jyxx/pm/pm%s.html" %  url_date
 try:
     f = None
     f = urllib2.urlopen(url_one)
     rawdata = f.read()
 except Exception,e:
-    logging.error("下载此页信息失败！URL：%s" % url_one)
-    logging.error(e)
-    exit(1)
+    if isinstance(e,urllib2.HTTPError):
+        logging.warning("此页可能无信息 http exception code:%s ,URL：%s" % (e.code,url_one))
+        sys.exit(0)
+    else:
+        logging.error("下载此页信息失败！URL：%s" % url_one)
+        logging.error(e)
+        sys.exit(1)
 finally:
     if f!=None:
         f.close()
@@ -68,13 +74,11 @@ try:
     delete from data_selling where origin='%s' and pub_date=%s;\
     delete from data_trading where origin='%s' and pub_date=%s;" 
 
-    # check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
-    
-    # cursor.execute(check_sql % ('郑州',url_date))
-     
+    # check_sql = "select count(*) from data_buy where origin='%s' and pub_date='%s';"
+    # cursor.execute(check_sql %  ('郑州',url_date))
     # logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
 
-    cursor.execute(delete_sql % ('郑州',url_date,'郑州',url_date,'郑州',url_date))
+    cursor.execute(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
     logging.info(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
 except Exception,e:
     logging.error(" MySQL server exception while delete sql!!!")
