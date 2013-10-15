@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #encoding=utf-8
 # pip install BeautifulSoup MySQL-python
+# from 20100416
 import sys,re,urllib2,urllib,cookielib,chardet,time
 from BeautifulSoup import BeautifulSoup,Comment
 from datetime import * 

@@ -68,8 +68,7 @@ def main():
         check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
         
         cursor.execute(check_sql % ('大连',url_date))
-        print 
-        logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
+        logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
 
         cursor.execute(delete_sql % ('大连',url_date,'大连',url_date,'大连',url_date))
         logging.info(delete_sql %  ('大连',url_date,'大连',url_date,'大连',url_date))
@@ -119,6 +118,7 @@ def main():
                                 if value.encode('utf-8') == '总计': 
                                     break
                                 # print value
+                                value = value.replace(',','')
                                 tr_values.append(value)
                         if len(tr_values) > 0:
                             try:
@@ -146,7 +146,7 @@ def main():
                                     conn.commit()
                                     conn.close()
 
-                time.sleep(3)
+            time.sleep(0.5)
                 # rawdata = unicode(rawdata,encoding='gbk').encode('utf-8')
 
 #action=Pu00021_result&Pu00021_Input.prefix=&Pu00021_Input.trade_date=20130924&Pu00021_Input.content=0&Pu00021_Input.content=1&Pu00021_Input.content=2&Pu00021_Input.variety=a&Pu00021_Input.trade_type=0&Pu00021_Input.contract_id=a1311&Submit=%B2%E9+%D1%AF
