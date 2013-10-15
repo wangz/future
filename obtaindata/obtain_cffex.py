@@ -79,8 +79,7 @@ try:
     check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
     
     cursor.execute(check_sql % ('中金',url_date))
-    print 
-    logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
+    logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
 
     cursor.execute(delete_sql % ('中金',url_date,'中金',url_date,'中金',url_date))
     logging.info(delete_sql %  ('中金',url_date,'中金',url_date,'中金',url_date))
@@ -123,7 +122,7 @@ if data_c > 3:
     logging.info("obtain data success,start process")
 else:
     logging.warning("此页未找到足够数据！obtain data failed date: %s" % url_one)
-    exit(1)
+    exit(0)
 
 for index,e in enumerate(dom.getElementsByTagName("data")):
 
@@ -162,7 +161,7 @@ for index,e in enumerate(dom.getElementsByTagName("data")):
             conn.commit()
             conn.close()
     
-time.sleep(3)  
+time.sleep(1)  
 
 
 

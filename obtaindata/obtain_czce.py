@@ -74,9 +74,11 @@ try:
     delete from data_selling where origin='%s' and pub_date=%s;\
     delete from data_trading where origin='%s' and pub_date=%s;" 
 
-    # check_sql = "select count(*) from data_buy where origin='%s' and pub_date='%s';"
-    # cursor.execute(check_sql %  ('郑州',url_date))
-    # logging.info("already get data count need delete:" %  cursor.fetchall()[0][0])
+    check_sql = "select count(*) from data_buy where origin='%s' and pub_date='%s';"
+    cursor.execute(check_sql %  ('郑州',url_date))
+    logging.info("already get data count need delete:%s" %  cursor.fetchall()[0][0])
+
+    conn.commit()
 
     cursor.execute(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
     logging.info(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
