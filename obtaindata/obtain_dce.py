@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #encoding=utf-8
+#from 20000508
 import urllib,urllib2,sys
 from BeautifulSoup import BeautifulSoup,Comment
 from datetime import * 
@@ -15,8 +16,17 @@ def post(url, data):
     req = urllib2.Request(url)  
     data = urllib.urlencode(data,True)  
     #enable cookie  
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())  
-    response = opener.open(req, data)  
+    try:
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())  
+        response = opener.open(req, data) 
+    except Exception,e:
+        if isinstance(e,urllib2.HTTPError):
+        logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
+        sys.exit(0)
+    else:
+        logging.error("下载此页信息失败！URL：%s data:%s" % (url,data)
+        logging.error(e)
+        sys.exit(1)
     return response.read() 
 
 def getcontract(trade_date = None,variety = None):
@@ -91,7 +101,7 @@ def main():
         except Exception,e:
             logging.error(" get page data failed!!!")
             logging.error(e)
-            sys.exit(1)
+            sys.exit(2)
 
         print contracts
         if len(contracts)>0:
