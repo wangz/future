@@ -21,12 +21,12 @@ def post(url, data):
         response = opener.open(req, data) 
     except Exception,e:
         if isinstance(e,urllib2.HTTPError):
-        logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
-        sys.exit(0)
-    else:
-        logging.error("下载此页信息失败！URL：%s data:%s" % (url,data)
-        logging.error(e)
-        sys.exit(1)
+            logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
+            sys.exit(0)
+        else:
+            logging.error("下载此页信息失败！URL：%s data:%s" % (url,data)
+            logging.error(e)
+            sys.exit(1)
     return response.read() 
 
 def getcontract(trade_date = None,variety = None):
