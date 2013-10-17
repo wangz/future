@@ -16,17 +16,21 @@ def post(url, data):
     req = urllib2.Request(url)  
     data = urllib.urlencode(data,True)  
     #enable cookie  
-    try:
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())  
-        response = opener.open(req, data, timeout = 2) 
-    except Exception,e:
-        if isinstance(e,urllib2.HTTPError):
-            logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
-            sys.exit(0)
-        else:
-            logging.error("下载此页信息失败！URL：%s data:%s" % (url,data))
-            logging.error(e)
-            sys.exit(1)
+    for x in [1,2,3,4]:
+        try:
+            opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())  
+            response = opener.open(req, data, timeout = 20) 
+            break
+        except Exception,e:
+            if isinstance(e,urllib2.HTTPError):
+                logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
+                sys.exit(0)
+            else:
+                logging.error("下载此页信息失败！reconnect:%s URL：%s data:%s" % (x,url,data))
+                logging.error(e)
+                time.sleep(3)
+                if x==4:  
+                    sys.exit(1)
     return response.read() 
 
 def getcontract(trade_date = None,variety = None):
