@@ -18,7 +18,7 @@ def post(url, data):
     #enable cookie  
     try:
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor())  
-        response = opener.open(req, data) 
+        response = opener.open(req, data, timeout = 2) 
     except Exception,e:
         if isinstance(e,urllib2.HTTPError):
             logging.warning("下载此页信息失败 http exception code:%s ,URL：%s" % (e.code,url))
