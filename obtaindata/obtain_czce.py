@@ -197,7 +197,8 @@ if ishasdata:
                                     if value == '-':
                                         value = 'blank'
                                     tr_values.append(value)
-                                if len(tr_values)>0 and hydm!=None:
+                                # print tr_values,len(tr_values)
+                                if len(tr_values)>1 and hydm!=None:
                                     # put into database
                                     # time.sleep(1)
                                     try:
