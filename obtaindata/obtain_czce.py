@@ -193,6 +193,7 @@ if ishasdata:
                                     if value == '合计':
                                         break
                                     value = value.replace(',','')
+                                    value = value.replace('&nbsp;','')                                   
                                     if value == '-':
                                         value = 'blank'
                                     tr_values.append(value)
