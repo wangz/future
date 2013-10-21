@@ -40,6 +40,8 @@ if url_date>"20100824":
     url_one = "http://www.czce.com.cn/portal/exchange/%s/datatradeholding/%s.htm" % (url_date[0:4],url_date)
 else:
     url_one = "http://www.czce.com.cn/portal/exchange/jyxx/pm/pm%s.html" %  url_date
+logging.info("URL：%s" % url_one)
+
 try:
     f = None
     f = urllib2.urlopen(url_one)
@@ -114,55 +116,114 @@ else:
     logging.warning("此页未找到足够数据！obtain data failed date: %s" % url_one)
 
 if ishasdata:
-    
-    for table_index,m in enumerate(soup.findAll('table')): 
-        hydm = 'None' #heyuedaima  
-        if m.get('class') != 'table':
-            continue
-        for tr_index,mtr in enumerate(m.findAll('tr')):
-            if tr_index == 0 :
-                if mtr.find('td'):
-                    hydm = mtr.find('td').find('b').string.split('&nbsp;')[0]
-                    if hydm.find('合约')!= -1:
-                        hydm = hydm.split('：')[1]
-                    else:
-                        break
-            elif tr_index > 1:
-                tr_values = []
-                for td_index,mtd in enumerate(mtr.findAll('td')):
-                    value = mtd.string
-                    if value == '合计':
-                        break
-                    value = value.replace(',','')
-                    if value == '-':
-                        value = 'blank'
-                    tr_values.append(value)
-                if len(tr_values)>0 and hydm!=None:
-                    # put into database
-                    try:
-                        conn = None
-                        cursor = None
-                        conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
-                        cursor = conn.cursor()
-                        if tr_values[1]!='blank':
-                            logging.info(query1 % ('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
-                            cursor.execute(query1,('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
-                        if tr_values[5]!='blank':
-                            logging.info(query2 % ('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
-                            cursor.execute(query2,('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
-                        if tr_values[9]!='blank':
-                            logging.info(query3 % ('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
-                            cursor.execute(query3,('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
-                    except Exception,e:
-                        logging.error(" MySQL server exception!!!")
-                        logging.error(e)
-                        sys.exit(1)
-                    finally:
-                        if cursor!= None:
-                            cursor.close()
-                        if conn!= None:
-                            conn.commit()
-                            conn.close()
+    if url_date>"20100824":
+        for table_index,m in enumerate(soup.findAll('table')): 
+            hydm = 'None' #heyuedaima  
+            if m.get('class') != 'table':
+                continue
+            for tr_index,mtr in enumerate(m.findAll('tr')):
+                if tr_index == 0 :
+                    if mtr.find('td'):
+                        hydm = mtr.find('td').find('b').string.split('&nbsp;')[0]
+                        if hydm.find('合约')!= -1:
+                            hydm = hydm.split('：')[1]
+                        else:
+                            break
+                elif tr_index > 1:
+                    tr_values = []
+                    for td_index,mtd in enumerate(mtr.findAll('td')):
+                        value = mtd.string
+                        if value == '合计':
+                            break
+                        value = value.replace(',','')
+                        if value == '-':
+                            value = 'blank'
+                        tr_values.append(value)
+                    if len(tr_values)>0 and hydm!=None:
+                        # put into database
+                        try:
+                            conn = None
+                            cursor = None
+                            conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
+                            cursor = conn.cursor()
+                            if tr_values[1]!='blank':
+                                logging.info(query1 % ('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                                cursor.execute(query1,('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                            if tr_values[5]!='blank':
+                                logging.info(query2 % ('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                                cursor.execute(query2,('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                            if tr_values[9]!='blank':
+                                logging.info(query3 % ('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                                cursor.execute(query3,('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                        except Exception,e:
+                            logging.error(" MySQL server exception!!!")
+                            logging.error(e)
+                            sys.exit(1)
+                        finally:
+                            if cursor!= None:
+                                cursor.close()
+                            if conn!= None:
+                                conn.commit()
+                                conn.close()
+    else:
+        print url_date
+        for div_index,m in enumerate(soup.findAll('div',align="left")): 
+            hydm = None
+            hydm = m.find('b').find('font').string
+            if hydm.find('合约')!= -1:
+                hydm = hydm.split(':')[0]
+                hydm=hydm.replace('合约代码','')
+                hydm=hydm.replace('日期','').strip()
+                print hydm
+                if hydm!=None:
+                    tt = m.nextSibling
+                    if tt.name == "table":
+                        for t_index,tr_t in enumerate(tt.findAll('tr')):
+                            logging.info("hang:%s" % t_index)
+                            if t_index == 0:
+                                continue
+                            else:
+                                tr_values = []
+                                for td_index,mtd in enumerate(tr_t.findAll('td')):
+                                    value = mtd.string
+                                    if value == None:
+                                        break
+                                    else:
+                                        value = value.strip()
+                                    if value == '合计':
+                                        break
+                                    value = value.replace(',','')
+                                    if value == '-':
+                                        value = 'blank'
+                                    tr_values.append(value)
+                                if len(tr_values)>0 and hydm!=None:
+                                    # put into database
+                                    # time.sleep(1)
+                                    try:
+                                        conn = None
+                                        cursor = None
+                                        conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
+                                        cursor = conn.cursor()
+                                        if tr_values[1]!='blank':
+                                            logging.info(query1 % ('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                                            cursor.execute(query1,('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                                        if tr_values[5]!='blank':
+                                            logging.info(query2 % ('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                                            cursor.execute(query2,('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                                        if tr_values[9]!='blank':
+                                            logging.info(query3 % ('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                                            cursor.execute(query3,('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                                    except Exception,e:
+                                        logging.error(" MySQL server exception!!!")
+                                        logging.error(e)
+                                        sys.exit(1)
+                                    finally:
+                                        if cursor!= None:
+                                            cursor.close()
+                                        if conn!= None:
+                                            conn.commit()
+                                            conn.close()
+
 
             # time.sleep(1)
 

@@ -97,7 +97,7 @@ def main():
             conn.commit()
             conn.close()
 
-    varietys = ['a','b','c','j','jm','l','m','p','v','y','s']
+    varietys = ['a','b','c','i','j','jm','l','m','p','v','y','s']
     for v in varietys:
         print v
         try:
