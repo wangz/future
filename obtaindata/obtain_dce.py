@@ -161,23 +161,10 @@ def main():
                                     conn.close()
 
             time.sleep(0.5)
-                # rawdata = unicode(rawdata,encoding='gbk').encode('utf-8')
+    from smtpmail import send_mail
+    send_mail(["51649548@qq.com"],"数据处理情况","%s数据 日期%s 处理完成" % ('大连',url_date))
 
-#action=Pu00021_result&Pu00021_Input.prefix=&Pu00021_Input.trade_date=20130924&Pu00021_Input.content=0&Pu00021_Input.content=1&Pu00021_Input.content=2&Pu00021_Input.variety=a&Pu00021_Input.trade_type=0&Pu00021_Input.contract_id=a1311&Submit=%B2%E9+%D1%AF
 
-#Referer	http://www.dce.com.cn/PublicWeb/MainServlet?action=Pu00021_search
-#action=Pu00021_result&Pu00021_Input.prefix=&Pu00021_Input.trade_date=20130918&Pu00021_Input.content=0&Pu00021_Input.content=1&Pu00021_Input.content=2&Pu00021_Input.variety=y&Pu00021_Input.trade_type=0&Pu00021_Input.contract_id=y1311&Submit=%B2%E9+%D1%AF
-# <option value="a">豆一</option>
-# <option value="b">豆二</option>
-# <option value="c">玉米</option>
-# <option value="j">焦炭</option>
-# <option value="jm">焦煤</option>
-# <option value="l">聚乙烯</option>
-# <option value="m">豆粕</option>
-# <option value="p">棕榈油</option>
-# <option value="v">聚氯乙烯</option>
-# <option value="y">豆油</option>
-# <option value="s">大豆</option>
 
     
 

@@ -230,6 +230,8 @@ if ishasdata:
             # time.sleep(1)
 
 time.sleep(3)            
-        
+from smtpmail import send_mail
+send_mail(["51649548@qq.com"],"数据处理情况","%s数据 日期%s 处理完成" % ('郑州',url_date))
+
 
 
