@@ -13,11 +13,11 @@ import dbconf
 reload(sys) 
 sys.setdefaultencoding('utf8')
 
-logging.basicConfig(filename='future_shfe.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
+logging.basicConfig(filename='futures.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
  
-query1 = "insert into data_trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query2 = "insert into data_buy(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query3 = "insert into data_selling(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+query1 = "insert into trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+query2 = "insert into long(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+query3 = "insert into short(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 
 
 
@@ -68,11 +68,11 @@ cursor = None
 try:
     conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
     cursor = conn.cursor()
-    delete_sql = "delete from data_buy where origin='%s' and pub_date=%s;\
-    delete from data_selling where origin='%s' and pub_date=%s;\
-    delete from data_trading where origin='%s' and pub_date=%s;" 
+    delete_sql = "delete from long where origin='%s' and pub_date=%s;\
+    delete from short where origin='%s' and pub_date=%s;\
+    delete from trading where origin='%s' and pub_date=%s;" 
 
-    check_sql = "select count(*) from data_buy where origin='%s' and pub_date=%s;"
+    check_sql = "select count(*) from long where origin='%s' and pub_date=%s;"
     
     cursor.execute(check_sql % ('上期',url_date))
      
@@ -231,7 +231,7 @@ if ishasdata:
 #        time.sleep(1)
 time.sleep(3)            
 from smtpmail import send_mail
-send_mail(["51649548@qq.com"],"数据处理情况","%s数据 日期%s 处理完成" % ('上期',url_date))
+send_mail(["51649548@qq.com","aaronfu@triumphantbank.com","johlu@triumphantbank.com","dangwannian@triumphantbank"],"数据处理情况","%s数据 日期%s 处理完成" % ('上期',url_date))
        
 
 
