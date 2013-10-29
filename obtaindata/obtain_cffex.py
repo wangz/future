@@ -23,9 +23,11 @@ logging.basicConfig(filename='futures.log',format='%(asctime)s %(levelname)s %(m
 # console.setFormatter(formatter);
 # logging.getLogger('').addHandler(console);
 
-query1 = "insert into trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query2 = "insert into longpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query3 = "insert into shortpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+# 中金最少放在1，然后是郑州，2，然后是上海3，然后是大连4
+query1 = "insert into trading(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+query2 = "insert into longpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+query3 = "insert into shortpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+
 
 url_date = "20130918"
 
@@ -79,10 +81,10 @@ try:
 
     check_sql = "select count(*) from longpos where origin='%s' and pub_date=%s;"
     
-    cursor.execute(check_sql % ('中金',url_date))
+    cursor.execute(check_sql % (1,url_date))
     logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
 
-    cursor.execute(delete_sql % ('中金',url_date,'中金',url_date,'中金',url_date))
+    cursor.execute(delete_sql % (1,url_date,1,url_date,1,url_date))
     logging.info(delete_sql %  ('中金',url_date,'中金',url_date,'中金',url_date))
 except Exception,e:
     logging.error(" MySQL server exception!!!")
@@ -143,14 +145,14 @@ for index,e in enumerate(dom.getElementsByTagName("data")):
         conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
         cursor = conn.cursor()
         if dataType == '0':
-            logging.info(query1 % ('中金',instrument,shortname,'成交量',value,url_date))
-            cursor.execute(query1,('中金',instrument,shortname,'成交量',value,url_date))
+            logging.info(query1 % (1,instrument,shortname,value,url_date))
+            cursor.execute(query1,('1',instrument,shortname,value,url_date))
         if dataType == '1':
-            logging.info(query2 % ('中金',instrument,shortname,'持买单量',value,url_date))
-            cursor.execute(query2,('中金',instrument,shortname,'持买单量',value,url_date))
+            logging.info(query2 % (1,instrument,shortname,value,url_date))
+            cursor.execute(query2,('1',instrument,shortname,value,url_date))
         if dataType == '2':
-            logging.info(query3 % ('中金',instrument,shortname,'持卖单量',value,url_date))
-            cursor.execute(query3,('中金',instrument,shortname,'持卖单量',value,url_date))
+            logging.info(query3 % (1,instrument,shortname,value,url_date))
+            cursor.execute(query3,('1',instrument,shortname,value,url_date))
     except Exception,e:
         logging.error(" MySQL server exception!!!")
         logging.error(e)

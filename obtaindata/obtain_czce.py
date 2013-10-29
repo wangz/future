@@ -20,10 +20,10 @@ logging.basicConfig(filename='futures.log',format='%(asctime)s %(levelname)s %(m
 # # tell the handler to use this format
 # console.setFormatter(formatter);
 # logging.getLogger('').addHandler(console);
-
-query1 = "insert into trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query2 = "insert into longpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query3 = "insert into shortpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+# 中金最少放在1，然后是郑州，2，然后是上海3，然后是大连4
+query1 = "insert into trading(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+query2 = "insert into longpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+query3 = "insert into shortpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
 
 url_date = "20130711"
 print len(sys.argv)
@@ -77,12 +77,12 @@ try:
     delete from trading where origin='%s' and pub_date=%s;" 
 
     check_sql = "select count(*) from longpos where origin='%s' and pub_date='%s';"
-    cursor.execute(check_sql %  ('郑州',url_date))
+    cursor.execute(check_sql %  ('2',url_date))
     logging.info("already get data count need delete:%s" %  cursor.fetchall()[0][0])
 
     conn.commit()
 
-    cursor.execute(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
+    cursor.execute(delete_sql %  (2,url_date,2,url_date,2,url_date))
     logging.info(delete_sql %  ('郑州',url_date,'郑州',url_date,'郑州',url_date))
 except Exception,e:
     logging.error(" MySQL server exception while delete sql!!!")
@@ -147,14 +147,14 @@ if ishasdata:
                             conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
                             cursor = conn.cursor()
                             if tr_values[1]!='blank':
-                                logging.info(query1 % ('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
-                                cursor.execute(query1,('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                                logging.info(query1 % ('2',hydm,tr_values[1],tr_values[2],url_date))
+                                cursor.execute(query1,('2',hydm,tr_values[1],tr_values[2],url_date))
                             if tr_values[5]!='blank':
-                                logging.info(query2 % ('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
-                                cursor.execute(query2,('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                                logging.info(query2 % ('2',hydm,tr_values[4],tr_values[5],url_date))
+                                cursor.execute(query2,('2',hydm,tr_values[4],tr_values[5],url_date))
                             if tr_values[9]!='blank':
-                                logging.info(query3 % ('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
-                                cursor.execute(query3,('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                                logging.info(query3 % ('2',hydm,tr_values[7],tr_values[8],url_date))
+                                cursor.execute(query3,('2',hydm,tr_values[7],tr_values[8],url_date))
                         except Exception,e:
                             logging.error(" MySQL server exception!!!")
                             logging.error(e)
@@ -207,14 +207,14 @@ if ishasdata:
                                         conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
                                         cursor = conn.cursor()
                                         if tr_values[1]!='blank':
-                                            logging.info(query1 % ('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
-                                            cursor.execute(query1,('郑州',hydm,tr_values[1],'成交量',tr_values[2],url_date))
+                                            logging.info(query1 % ('2',hydm,tr_values[1],tr_values[2],url_date))
+                                            cursor.execute(query1,('2',hydm,tr_values[1],tr_values[2],url_date))
                                         if tr_values[5]!='blank':
-                                            logging.info(query2 % ('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
-                                            cursor.execute(query2,('郑州',hydm,tr_values[4],'持买单量',tr_values[5],url_date))
+                                            logging.info(query2 % ('2',hydm,tr_values[4],tr_values[5],url_date))
+                                            cursor.execute(query2,('2',hydm,tr_values[4],tr_values[5],url_date))
                                         if tr_values[9]!='blank':
-                                            logging.info(query3 % ('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
-                                            cursor.execute(query3,('郑州',hydm,tr_values[7],'持卖单量',tr_values[8],url_date))
+                                            logging.info(query3 % ('2',hydm,tr_values[7],tr_values[8],url_date))
+                                            cursor.execute(query3,('2',hydm,tr_values[7],tr_values[8],url_date))
                                     except Exception,e:
                                         logging.error(" MySQL server exception!!!")
                                         logging.error(e)
