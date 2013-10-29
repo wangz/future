@@ -14,7 +14,7 @@ import dbconf
 reload(sys) 
 sys.setdefaultencoding('utf8')
 
-logging.basicConfig(filename='future_cffex.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
+logging.basicConfig(filename='futures.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
 # console = logging.StreamHandler();
 # console.setLevel(logging.INFO);
 # # set a format which is simpler for console use
@@ -24,8 +24,8 @@ logging.basicConfig(filename='future_cffex.log',format='%(asctime)s %(levelname)
 # logging.getLogger('').addHandler(console);
 
 query1 = "insert into trading(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query2 = "insert into long(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
-query3 = "insert into short(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+query2 = "insert into longpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
+query3 = "insert into shortpos(origin,contract,company,value_type,real_value,pub_date) values (%s,%s,%s,%s,%s,%s)"
 
 url_date = "20130918"
 
@@ -73,11 +73,11 @@ cursor = None
 try:
     conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
     cursor = conn.cursor()
-    delete_sql = "delete from long where origin='%s' and pub_date=%s;\
-    delete from short where origin='%s' and pub_date=%s;\
+    delete_sql = "delete from longpos where origin='%s' and pub_date=%s;\
+    delete from shortpos where origin='%s' and pub_date=%s;\
     delete from trading where origin='%s' and pub_date=%s;" 
 
-    check_sql = "select count(*) from long where origin='%s' and pub_date=%s;"
+    check_sql = "select count(*) from longpos where origin='%s' and pub_date=%s;"
     
     cursor.execute(check_sql % ('中金',url_date))
     logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
@@ -165,7 +165,11 @@ for index,e in enumerate(dom.getElementsByTagName("data")):
 time.sleep(1)  
 
 from smtpmail import send_mail
-send_mail(["51649548@qq.com","aaronfu@triumphantbank.com","johlu@triumphantbank.com","dangwannian@triumphantbank"],"数据处理情况","%s数据 日期%s 处理完成" % ('中金',url_date))
+send_mail(["51649548@qq.com"],"中金持仓提取情况","%s数据 日期%s 提取完成" % ('中金',url_date))
+send_mail(["aaronfu@triumphantbank.com"],"中金持仓提取情况","%s数据 日期%s 提取完成" % ('中金',url_date))
+send_mail(["johlu@triumphantbank.com"],"中金持仓提取情况","%s数据 日期%s 提取完成" % ('中金',url_date))
+send_mail(["dangwannian@triumphantbank"],"中金持仓提取情况","%s数据 日期%s 提取完成" % ('中金',url_date))
+
 
 
 
