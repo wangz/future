@@ -20,11 +20,11 @@ delete from data_buy; delete from data_selling ;delete from data_trading;
 
 delete from data_buy where origin='' and pub_date=''; delete from data_selling ;delete from data_trading;
 
- update longpos set origin=1 where origin='中金';update longpos set origin=2 where origin='郑州';update longpos set origin=3 where origin='上海';update longpos set origin=4 where origin='大连';
+ update longpos set origin=1 where origin='中金';update longpos set origin=2 where origin='郑州';update longpos set origin=3 where origin='上期';update longpos set origin=4 where origin='大连';
 
- update shortpos set origin=1 where origin='中金';update shortpos set origin=2 where origin='郑州';update shortpos set origin=3 where origin='上海';update shortpos set origin=4 where origin='大连';
+ update shortpos set origin=1 where origin='中金';update shortpos set origin=2 where origin='郑州';update shortpos set origin=3 where origin='上期';update shortpos set origin=4 where origin='大连';
 
- update trading set origin=1 where origin='中金';update trading set origin=2 where origin='郑州';update trading set origin=3 where origin='上海';update trading set origin=4 where origin='大连';
+ update trading set origin=1 where origin='中金';update trading set origin=2 where origin='郑州';update trading set origin=3 where origin='上期';update trading set origin=4 where origin='大连';
 
 上海数据差异记录：
 以九月为例
