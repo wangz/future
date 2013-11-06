@@ -55,9 +55,9 @@ def getcontract(trade_date = None,variety = None):
 def main(): 
     logging.basicConfig(filename='futures.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
      # 中金最少放在1，然后是郑州，2，然后是上海3，然后是大连4
-    query1 = "insert into trading(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
-    query2 = "insert into longpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
-    query3 = "insert into shortpos(origin,contract,company,real_value,pub_date) values (%s,%s,%s,%s,%s)"
+    query1 = "insert into tr(og,ct,co,vl,dt) values (%s,%s,%s,%s,%s)"
+    query2 = "insert into lp(og,ct,co,vl,dt) values (%s,%s,%s,%s,%s)"
+    query3 = "insert into sp(og,ct,co,vl,dt) values (%s,%s,%s,%s,%s)"
 
     url_date = "20130711"
 
@@ -75,11 +75,11 @@ def main():
     try:
         conn = MySQLdb.Connection(dbconf.host, dbconf.user, dbconf.password, dbconf.dbname,charset='utf8')
         cursor = conn.cursor()
-        delete_sql = "delete from longpos where origin='%s' and pub_date=%s;\
-        delete from shortpos where origin='%s' and pub_date=%s;\
-        delete from trading where origin='%s' and pub_date=%s;" 
+        delete_sql = "delete from lp where og='%s' and dt=%s;\
+        delete from sp where og='%s' and dt=%s;\
+        delete from tr where og='%s' and dt=%s;" 
 
-        check_sql = "select count(*) from longpos where origin='%s' and pub_date=%s;"
+        check_sql = "select count(*) from lp where og='%s' and dt=%s;"
         
         cursor.execute(check_sql % ('4',url_date))
         logging.info("already get data count need delete: %s" %  cursor.fetchall()[0][0])
