@@ -125,15 +125,16 @@ def main():
                             else:
                                 break
                         else:
-                            for d in r.findAll('td'):
-                                value = d.string.strip() if d.string else None
-                                if value == '&nbsp;':
-                                    value = "blank"
-                                if value.encode('utf-8') == '总计': 
-                                    break
-                                # print value
-                                value = value.replace(',','')
-                                tr_values.append(value)
+                            if r.get('class') == 'tr2':
+                                for d in r.findAll('td'):
+                                    value = d.string.strip() if d.string else None
+                                    if value == '&nbsp;':
+                                        value = "blank"
+                                    if value.encode('utf-8') == '总计': 
+                                        break
+                                    # print value
+                                    value = value.replace(',','')
+                                    tr_values.append(value)
                         if len(tr_values) > 0:
                             try:
                                 conn = None
