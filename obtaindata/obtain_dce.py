@@ -117,24 +117,35 @@ def main():
 
                 soup = BeautifulSoup(rawdata)
                 for t in soup.findAll('table'):
+
                     for index,r in enumerate(t.findAll('tr')):
                         tr_values = []
                         if index == 0:
                             if r.get('class') == 'tr0':
+                                td1 = r.find('td')
+                                value = td1.string.strip() if td1.string else None
+                                print value
+                                if value == "会员类别":
+                                    break
                                 continue
+                                # for d_index,d in enumerate(r.findAll('td')):
+                                #     if d_index == 0:
+                                #         value = d.string.strip() if d.string else None
+                                #         if value == " 会员类别":
+                                #             break
+                                #         continue
                             else:
                                 break
                         else:
-                            if r.get('class') == 'tr2':
-                                for d in r.findAll('td'):
-                                    value = d.string.strip() if d.string else None
-                                    if value == '&nbsp;':
-                                        value = "blank"
-                                    if value.encode('utf-8') == '总计': 
-                                        break
-                                    # print value
-                                    value = value.replace(',','')
-                                    tr_values.append(value)
+                            for d in r.findAll('td'):
+                                value = d.string.strip() if d.string else None
+                                if value == '&nbsp;':
+                                    value = "blank"
+                                if value.encode('utf-8') == '总计': 
+                                    break
+                                # print value
+                                value = value.replace(',','')
+                                tr_values.append(value)
                         if len(tr_values) > 0:
                             try:
                                 conn = None
